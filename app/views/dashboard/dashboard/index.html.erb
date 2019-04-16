@@ -13,6 +13,25 @@
   </div>
 </div>
 
+<div class="card float-left m-3 order-item-card">
+  <div class="card-body" id="to_do_list">
+    <h5 class="card-title">To-Do List</h5>
+    <% if current_merchant? %>
+    <p>
+      Items Need Image Updated:
+      <% @merchant.items.each do |item| %>
+        <% if item.image.include? "https://picsum.photos" %>
+          <li><%= link_to "#{item.name}", edit_dashboard_item_path(item) %></li>
+        <% end %>
+      <% end %>
+    </p>
+
+     <p><%= "You have #{@pending_orders.count} unfulfilled orders worth #{number_to_currency(@revenue)}" %></p>
+     <% end %>
+  </div>
+</div>
+
+
 <%= tag.div class: "card" do %>
   <%= tag.section class: "statistics card-body float-left m-4" do %>
     <%= tag.section id: "top-items-sold-by-quantity", class: "card-body float-left m-2" do %>
@@ -70,6 +89,8 @@
   <% end %>
 <% end %>
 
+
+
 <section>
   <p>
   <% if current_merchant? && current_user == @merchant %>
@@ -88,6 +109,7 @@
         <th>Created Date</th>
         <th>Quantity</th>
         <th>Price</th>
+        <th>Warning</th>
       </tr>
     </thead>
     <tbody>
@@ -101,6 +123,9 @@
           <td><%= order.created_at %></td>
           <td><%= order.total_quantity_for_merchant(@merchant.id) %></td>
           <td><%= order.total_price_for_merchant(@merchant.id) %></td>
+          <td><% if order.quantity_less_than_inventory?(order) == false %>
+            Items exceed current inventory. Please update inventory before proceeding.
+          <% end %></td>
         </tr>
       <% end %>
     </tbody>
