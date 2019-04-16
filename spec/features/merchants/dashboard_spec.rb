@@ -5,14 +5,17 @@ RSpec.describe 'merchant dashboard' do
     @merchant = create(:merchant)
     @admin = create(:admin)
     @i1, @i2 = create_list(:item, 2, user: @merchant)
+    @i3 = create(:item, user: @merchant, image: "https://images-na.ssl-images-amazon.com/images/I/61DEI%2BSDg0L._SL1320_.jpg")
+    @i4 = create(:item, user: @merchant, image: "https://compass-ssl.xbox.com/assets/f5/96/f5967de6-59db-4af0-80cf-461c03052eff.png?n=Results-Page_Page-Hero-0_X1S_1083x612.png")
     @o1, @o2 = create_list(:order, 2)
     @o3 = create(:shipped_order)
     @o4 = create(:cancelled_order)
-    create(:order_item, order: @o1, item: @i1, quantity: 1, price: 2)
+    create(:order_item, order: @o1, item: @i1, quantity: 5, price: 2)
     create(:order_item, order: @o1, item: @i2, quantity: 2, price: 2)
     create(:order_item, order: @o2, item: @i2, quantity: 4, price: 2)
     create(:order_item, order: @o3, item: @i1, quantity: 4, price: 2)
     create(:order_item, order: @o4, item: @i2, quantity: 5, price: 2)
+    # binding.pry
   end
 
   describe 'merchant user visits their profile' do
@@ -27,6 +30,7 @@ RSpec.describe 'merchant dashboard' do
         visit admin_merchant_path(@merchant)
       end
       after :each do
+
         expect(page).to have_content(@merchant.name)
         expect(page).to have_content("Email: #{@merchant.email}")
         expect(page).to have_content("Address: #{@merchant.address}")
@@ -89,6 +93,34 @@ RSpec.describe 'merchant dashboard' do
         expect(page.status_code).to eq(200)
         click_link('Items for Sale')
         expect(current_path).to eq(admin_merchant_items_path(@merchant))
+      end
+    end
+
+    describe "Shows a To-Do List" do
+      it "has an area marked To-Do List" do
+        expect(page).to have_content("To-Do List")
+      end
+
+      it "should see a list of items which are using placeholder image" do
+        within "#to_do_list" do
+          # binding.pry
+          expect(page).to have_content("Items Need Image Updated:")
+          expect(page).to have_link("#{@i1.name}")
+          expect(page).to have_link("#{@i2.name}")
+          expect(page).to_not have_link("#{@i3.name}")
+          expect(page).to_not have_link("#{@i4.name}")
+        end
+      end
+
+      it "should see a list of Unfullfilled orders and Possible Revenue" do
+        within "#to_do_list" do
+          expect(page).to have_content("You have #{Order.pending_orders.count} unfulfilled orders worth $#{Order.missing_revenue(@merchant)}")
+        end
+      end
+      it "should see waring if order items greater than current inventory" do
+        save_and_open_page
+        # binding.pry
+        expect(page).to have_content("Items exceed current inventory. Please update inventory before proceeding.")
       end
     end
   end

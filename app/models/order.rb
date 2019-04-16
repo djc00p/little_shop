@@ -72,4 +72,26 @@ class Order < ApplicationRecord
         .order('quantity desc')
         .limit(limit)
   end
+
+  def self.missing_revenue(merchant_id)
+    total_revenue = pending_orders.map  do |order|
+      order.total_price_for_merchant(merchant_id)
+    end
+    total_revenue.sum
+    # .joins(:order_items).where(status: :pending).pluck(:price).sum
+  end
+
+  def inventory_check
+    items.pluck(:inventory)
+  end
+
+  def quantity_check
+    order_items.pluck(:quantity)
+  end
+
+  def quantity_less_than_inventory?(order)
+    a = order.inventory_check
+    b = order.quantity_check
+    a.zip(b).all? { |a, b| a > b }
+  end
 end

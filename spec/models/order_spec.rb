@@ -43,6 +43,43 @@ RSpec.describe Order, type: :model do
     it '.total_cost' do
       expect(@order.total_cost).to eq((@oi_1.quantity*@oi_1.price) + (@oi_2.quantity*@oi_2.price))
     end
+
+    it ".inventory_check" do
+      expect(@order.inventory_check).to eq([4,6])
+    end
+
+    it ".quantity_check" do
+      expect(@order.quantity_check).to eq([1,1])
+    end
+
+    it ".quantity_less_than_inventory?(order)" do
+      expect(@order.quantity_less_than_inventory?(@order)).to eq(true)
+
+      user = create(:user)
+      item_1 = create(:item)
+      item_2 = create(:item)
+      yesterday = 1.day.ago
+
+      order = create(:order, user: user, created_at: yesterday)
+      oi_1 = create(:order_item, order: order, item: item_1, price: 1, quantity: 20, created_at: yesterday, updated_at: yesterday)
+      oi_2 = create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: yesterday, updated_at: 2.hours.ago)
+
+      merchant = create(:merchant)
+      i1, i2 = create_list(:item, 2, user: merchant)
+      o1, o2 = create_list(:order, 2)
+      o3 = create(:packaged_order)
+      o4 = create(:shipped_order)
+      o5 = create(:cancelled_order)
+      create(:order_item, order: o1, item: i1, quantity: 10, price: 2)
+      create(:order_item, order: o1, item: i2, quantity: 10, price: 2)
+      create(:order_item, order: o2, item: i2, quantity: 4, price: 2)
+      create(:order_item, order: o3, item: i1, quantity: 4, price: 2)
+      create(:order_item, order: o4, item: i2, quantity: 5, price: 2)
+      create(:order_item, order: o5, item: i1, quantity: 5, price: 2)
+
+      expect(order.quantity_less_than_inventory?(order)).to eq(false)
+    end
+
   end
 
   describe 'class methods' do
@@ -101,6 +138,10 @@ RSpec.describe Order, type: :model do
 
     it '.sorted_by_items_shipped' do
       expect(Order.sorted_by_items_shipped).to eq([@o6, @o5, @o4, @o3, @o2, @o1])
+    end
+
+    it '.missing_revenue' do
+      expect(Order.missing_revenue(@merchant)).to eq(0.492e3)
     end
   end
 
