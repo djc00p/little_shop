@@ -93,6 +93,6 @@ class Order < ApplicationRecord
   def quantity_less_than_inventory?(order)
     a = order.inventory_check
     b = order.quantity_check
-    a.zip(b).all? { |a, b| a > b }
+    a.zip(b).all? { |a, b| a >= b }
   end
 end
