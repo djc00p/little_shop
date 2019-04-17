@@ -119,9 +119,15 @@ RSpec.describe 'merchant dashboard' do
       end
       it "should see waring if order items greater than current inventory" do
         save_and_open_page
-        # binding.pry
         expect(page).to have_content("Items exceed current inventory. Please update inventory before proceeding.")
       end
+    end
+
+    describe 'Merchant Coupons' do
+      it "should have a link to manage Coupons" do
+        expect(page).to have_link("Manage Coupons")
+      end
+      # binding.pry
     end
   end
 end
