@@ -1,3 +1,4 @@
+
 class CartController < ApplicationController
   before_action :visitor_or_user
 
@@ -41,8 +42,7 @@ class CartController < ApplicationController
 
   def coupon_check
     @coupon = Coupon.find_by(name: params[:coupon])
-    #  
-    if @coupon
+    if @coupon && current_user.orders.where(coupon_id: @coupon).count == 0
       session[:coupon] = @coupon.id
       flash[:notice] = "Coupon Applied"
     else

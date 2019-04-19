@@ -15,7 +15,7 @@ RSpec.describe 'merchant dashboard' do
     create(:order_item, order: @o2, item: @i2, quantity: 4, price: 2)
     create(:order_item, order: @o3, item: @i1, quantity: 4, price: 2)
     create(:order_item, order: @o4, item: @i2, quantity: 5, price: 2)
-    #  
+    #
   end
 
   describe 'merchant user visits their profile' do
@@ -103,7 +103,7 @@ RSpec.describe 'merchant dashboard' do
 
       it "should see a list of items which are using placeholder image" do
         within "#to_do_list" do
-          #  
+          #
           expect(page).to have_content("Items Need Image Updated:")
           expect(page).to have_link("#{@i1.name}")
           expect(page).to have_link("#{@i2.name}")
@@ -118,7 +118,7 @@ RSpec.describe 'merchant dashboard' do
         end
       end
       it "should see waring if order items greater than current inventory" do
-        save_and_open_page
+        
         expect(page).to have_content("Items exceed current inventory. Please update inventory before proceeding.")
       end
     end
@@ -127,7 +127,7 @@ RSpec.describe 'merchant dashboard' do
       it "should have a link to manage Coupons" do
         expect(page).to have_link("Manage Coupons")
       end
-      #  
+      #
     end
   end
 end

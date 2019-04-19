@@ -35,7 +35,7 @@ class Profile::OrdersController < ApplicationController
     @coupon =  Coupon.find(session[:coupon]) if session[:coupon]
     discount_left = @coupon.dollars_off if @coupon
       cart.items.each do |item, quantity|
-        if @coupon && @coupon.merchant_id == item.merchant_id && discount_left > 0
+        if @coupon && @coupon.merchant_id == item.merchant_id && discount_left > 0 
           if quantity * item.price >= discount_left
             discounted_item_price = item.price - (discount_left.to_f / quantity)
             discount_left = 0
