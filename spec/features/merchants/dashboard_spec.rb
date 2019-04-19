@@ -15,7 +15,7 @@ RSpec.describe 'merchant dashboard' do
     create(:order_item, order: @o2, item: @i2, quantity: 4, price: 2)
     create(:order_item, order: @o3, item: @i1, quantity: 4, price: 2)
     create(:order_item, order: @o4, item: @i2, quantity: 5, price: 2)
-    #  
+    # binding.pry
   end
 
   describe 'merchant user visits their profile' do
@@ -103,7 +103,7 @@ RSpec.describe 'merchant dashboard' do
 
       it "should see a list of items which are using placeholder image" do
         within "#to_do_list" do
-          #  
+          # binding.pry
           expect(page).to have_content("Items Need Image Updated:")
           expect(page).to have_link("#{@i1.name}")
           expect(page).to have_link("#{@i2.name}")
@@ -127,7 +127,7 @@ RSpec.describe 'merchant dashboard' do
       it "should have a link to manage Coupons" do
         expect(page).to have_link("Manage Coupons")
       end
-      #  
+      # binding.pry
     end
   end
 end

@@ -21,8 +21,8 @@ RSpec.describe "Coupon List" do
     visit dashboard_path(@merchant)
   end
   it "should be directed a list of the coupons" do
-    #
-    click_link "Manage Coupons"
+        
+        click_link "Manage Coupons"
 
     expect(current_path).to eq(dashboard_coupons_path)
   end
@@ -33,13 +33,13 @@ RSpec.describe "Coupon List" do
     end
 
     it "Should see Coupons" do
-      expect(page).to have_link(@c1.name)
+      expect(page).to have_content(@c1.name)
       expect(page).to have_content("#{@c1.dollars_off} Dollars Off")
 
-      expect(page).to have_link(@c2.name)
+      expect(page).to have_content(@c2.name)
       expect(page).to have_content("#{@c2.dollars_off} Dollars Off")
 
-      expect(page).to have_link(@c3.name)
+      expect(page).to have_content(@c3.name)
       expect(page).to have_content("#{@c3.dollars_off} Dollars Off")
     end
 
@@ -97,7 +97,8 @@ RSpec.describe "Coupon List" do
 
       click_on "Update Coupon"
 
-      expect(current_path).to eq(dashboard_coupon_path(@c1))
+      expect(current_path).to eq(dashboard_coupons_path)
+      page.reset!
 
       visit dashboard_coupons_path
 

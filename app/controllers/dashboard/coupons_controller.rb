@@ -6,7 +6,11 @@ class Dashboard::CouponsController < Dashboard::BaseController
   end
 
   def new
-    @coupon = Coupon.new
+    if coupon_limit_5
+      @coupon = Coupon.new
+    else
+      render file: 'public/404', status: 404
+    end
   end
 
   def create
@@ -18,10 +22,6 @@ class Dashboard::CouponsController < Dashboard::BaseController
       flash[:danger] = @coupon.errors.full_messages
       render :new
     end
-  end
-
-  def show
-    @coupon = Coupon.find(params[:id])
   end
 
   def edit
@@ -48,11 +48,7 @@ class Dashboard::CouponsController < Dashboard::BaseController
 
   def enable
     @coupon = Coupon.find(params[:id])
-    if current_user.coupons.active_count == 5
-      toggle_active(@coupon, false)
-      flash[:failure] = "Cant have more then 5 active coupons"
-      redirect_to dashboard_coupons_path
-    elsif @coupon.user == current_user
+    if @coupon.user == current_user
       toggle_active(@coupon, true)
       redirect_to dashboard_coupons_path
     else
@@ -70,23 +66,28 @@ class Dashboard::CouponsController < Dashboard::BaseController
     end
   end
 
-  def destroy
-    @coupon = Coupon.find(params[:id])
-    if @coupon && @coupon.user == current_user
-      if @coupon && @coupon.used_in_order?
-        flash[:error] = "Attempt to delete #{@coupon.name} was thwarted!"
-      else
-        @coupon.destroy
-      end
-      redirect_to dashboard_items_path
-    else
-      render file: 'public/404', status: 404
-    end
-  end
+  # def destroy
+  #   @coupon = Coupon.find(params[:id])
+  #   if @coupon && @coupon.user == current_user
+  #     binding.pry@
+  #     if @coupon && @coupon.in_use?
+  #       flash[:error] = "Attempt to delete #{@coupon.name} was thwarted!"
+  #     else
+  #       @coupon.destroy
+  #     end
+  #     redirect_to dashboard_items_path
+  #   else
+  #     render file: 'public/404', status: 404
+  #   end
+  # end
 
   private
   def coupon_params
     params.require(:coupon).permit(:name, :dollars_off)
+  end
+
+  def coupon_limit_5
+    current_user.coupons.count < 5
   end
 
   def toggle_active(coupon, state)
