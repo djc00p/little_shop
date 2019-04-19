@@ -1,6 +1,6 @@
 class Order < ApplicationRecord
   belongs_to :user
-  # belongs_to :coupon
+  belongs_to :coupon, optional: true
   has_many :order_items
   has_many :items, through: :order_items
 
@@ -93,6 +93,6 @@ class Order < ApplicationRecord
   def quantity_less_than_inventory?(order)
     a = order.inventory_check
     b = order.quantity_check
-    a.zip(b).all? { |a, b| a >= b }
+    a.zip(b).all? { |a, b| a > b }
   end
 end
