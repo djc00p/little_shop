@@ -41,7 +41,6 @@ class CartController < ApplicationController
 
   def coupon_check
     @coupon = Coupon.find_by(name: params[:coupon])
-    #  
     if @coupon
       session[:coupon] = @coupon.id
       flash[:notice] = "Coupon Applied"
