@@ -1,6 +1,4 @@
 class Dashboard::CouponsController < Dashboard::BaseController
-  before_action :require_merchant
-
   def index
     @coupons = current_user.coupons
   end
@@ -30,19 +28,14 @@ class Dashboard::CouponsController < Dashboard::BaseController
 
   def update
     @coupon = Coupon.find(params[:id])
-    if @coupon.orders.count > 0
-      flash[:failure] = "Cant update Coupon in use"
-      redirect_to dashboard_coupon_path(@coupon)
+    @coupon.update(coupon_params)
+    if @coupon.save
+      flash[:success] = "Your Coupon has been updated!"
+      redirect_to dashboard_coupons_path
     else
-      @coupon.update(coupon_params)
-      if @coupon.save
-        flash[:success] = "Your Coupon has been updated!"
-        redirect_to dashboard_coupon_path(@coupon)
-      else
-        flash[:danger] = @coupon.errors.full_messages
-        @coupon = Coupon.find(params[:id])
-        render :edit
-      end
+      flash[:danger] = @coupon.errors.full_messages
+      @coupon = Coupon.find(params[:id])
+      render :edit
     end
   end
 
@@ -81,7 +74,7 @@ class Dashboard::CouponsController < Dashboard::BaseController
   #   end
   # end
 
-  private
+private
   def coupon_params
     params.require(:coupon).permit(:name, :dollars_off)
   end
