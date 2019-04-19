@@ -5,7 +5,7 @@
 <% @coupons.each do |coupon| %>
   <div class="card float-left m-3 order-item-card">
     <div class="card-body" id="coupon<%= coupon.id %>">
-      <h5 class="card-title"><%= coupon.name %></h5>
+      <h5 class="card-title"><%= link_to coupon.name, dashboard_coupon_path(coupon) %></h5>
       <li><%= coupon.dollars_off %> Dollars Off</li>
       <% if coupon.active? %>
         <%= button_to "Disable Coupon", dashboard_disable_coupon_path(coupon), method: :patch %>

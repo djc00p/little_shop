@@ -2,7 +2,21 @@
 <% if cart.contents.empty? %>
   <p>Your Cart is empty.</p>
 <% else %>
-  <h3>Total: <%= number_to_currency(cart.total) %></h3>
+  <% if @coupon %>
+    <h3>Total: <%= number_to_currency(cart.total) %></h3>
+    <h3>Discount Total: <%= number_to_currency(cart.total - @coupon.dollars_off) %></h3>
+  <% else %>
+    <h3>Total: <%= number_to_currency(cart.total) %></h3>
+  <% end %>
+  <%= form_tag coupon_check_path do %>
+    <p>
+      <%= label_tag :coupon %>
+      <%= text_field_tag :coupon %>
+    </p>
+    <p>
+      <%= submit_tag "Apply Coupon" %>
+    </p>
+  <% end %>
   <% if current_user %>
     <%= button_to "Check Out", profile_orders_path, method: :post %>
   <% else %>
