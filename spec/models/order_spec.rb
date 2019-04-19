@@ -7,7 +7,7 @@ RSpec.describe Order, type: :model do
 
   describe 'relationships' do
     it { should belong_to :user }
-    it { should belong_to :coupon }
+    # it { should belong_to :coupon }
     it { should have_many :order_items }
     it { should have_many(:items).through(:order_items) }
   end
@@ -18,8 +18,8 @@ RSpec.describe Order, type: :model do
       @item_1 = create(:item)
       @item_2 = create(:item)
       yesterday = 1.day.ago
-      @coupon = create(:coupon)
-      @order = create(:order, user: user, created_at: yesterday, coupon: @coupon)
+
+      @order = create(:order, user: user, created_at: yesterday)
       @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 1, created_at: yesterday, updated_at: yesterday)
       @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 1, created_at: yesterday, updated_at: 2.hours.ago)
 
