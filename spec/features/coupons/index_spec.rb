@@ -183,7 +183,7 @@ RSpec.describe "Coupon List" do
         click_button "Delete"
       end
 
-      expect(page).to have_content("Attempt to delete #{@c1.name} was thwarted!")
+      expect(page).to have_content("Attempt to delete #{@c1.name} was thwarted! Currently in Use.")
     end
   end
 end

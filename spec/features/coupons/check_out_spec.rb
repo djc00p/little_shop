@@ -12,6 +12,8 @@ RSpec.describe "Cart Coupons" do
     @i1, @i2, @i3 = create_list(:item, 3, user: @merchant_1)
     @i4, @i5, @i6 = create_list(:item, 3, user: @merchant_2)
 
+
+
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
     visit item_path(@i1)
     click_on "Add to Cart"
@@ -72,13 +74,11 @@ RSpec.describe "Cart Coupons" do
   end
 
   it "should not be able to apply same coupon and see flash message" do
-    @o1 = create(:order, coupon_id: @coupon)
+    @o1 = create(:order, user: @user, coupon_id: @coupon_1.id)
 
     fill_in "Coupon", with: 'Coupon 1'
 
     click_button "Apply Coupon"
-
-    click_on "Check Out"
 
     expect(page).to have_content("Coupon not saved")
   end

@@ -74,12 +74,11 @@ class Dashboard::CouponsController < Dashboard::BaseController
     @coupon = Coupon.find(params[:id])
     if @coupon && @coupon.user == current_user
       if @coupon.used_in_order?
-        flash[:error] = "Attempt to delete #{@coupon.name} was thwarted!"
-        redirect_to dashboard_coupons_path
+        flash[:error] = "Attempt to delete #{@coupon.name} was thwarted! Currently in Use."
       else
         @coupon.destroy
       end
-      redirect_to dashboard_items_path
+      redirect_to dashboard_coupons_path
     else
       render file: 'public/404', status: 404
     end

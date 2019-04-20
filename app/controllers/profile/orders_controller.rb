@@ -31,25 +31,32 @@ class Profile::OrdersController < ApplicationController
   end
 
   def create
-    order = Order.create(user: current_user, status: :pending)
-    @coupon =  Coupon.find(session[:coupon]) if session[:coupon]
-    discount_left = @coupon.dollars_off if @coupon
-      cart.items.each do |item, quantity|
-        if @coupon && @coupon.merchant_id == item.merchant_id && discount_left > 0 
-          if quantity * item.price >= discount_left
-            discounted_item_price = item.price - (discount_left.to_f / quantity)
-            discount_left = 0
-            order.order_items.create(item: item, quantity: quantity, price: discounted_item_price)
-          else
-            discount_left -= quantity * item.price
-            order.order_items.create(item: item, quantity: quantity, price: 0)
-          end
+    if session[:coupon]
+      @coupon =  Coupon.find(session[:coupon])
+      order = @coupon.orders.create(user: current_user, status: :pending)
+      discount_left = @coupon.dollars_off if @coupon
+    else
+      order = Order.create(user: current_user, status: :pending)
+    end
+    cart.items.each do |item, quantity|
+      if @coupon && @coupon.merchant_id == item.merchant_id && discount_left > 0
+
+        if quantity * item.price >= discount_left
+          discounted_item_price = item.price - (discount_left.to_f / quantity)
+          discount_left = 0
+          order.order_items.create(item: item, quantity: quantity, price: discounted_item_price)
         else
-          order.order_items.create(item: item, quantity: quantity, price: item.price)
+          discount_left -= quantity * item.price
+          order.order_items.create(item: item, quantity: quantity, price: 0)
         end
+
+      else
+        order.order_items.create(item: item, quantity: quantity, price: item.price)
       end
-      session.delete(:cart)
-      flash[:success] = "Your order has been created!"
-      redirect_to profile_orders_path
+    end
+    session.delete(:cart)
+    session.delete(:coupon)
+    flash[:success] = "Your order has been created!"
+    redirect_to profile_orders_path
   end
 end

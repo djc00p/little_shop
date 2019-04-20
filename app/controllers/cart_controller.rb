@@ -30,6 +30,7 @@ class CartController < ApplicationController
 
   def destroy
     session.delete(:cart)
+    session.delete(:coupon)
     redirect_to cart_path
   end
 
