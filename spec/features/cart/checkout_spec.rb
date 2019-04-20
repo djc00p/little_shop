@@ -73,6 +73,7 @@ RSpec.describe "Checking out" do
         expect(page).to have_content("Fulfilled: No")
       end
     end
+
   end
 
   context "as a visitor" do
